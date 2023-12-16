@@ -1,5 +1,6 @@
 package dev.ayanfe.taskmanagement.service.impl;
 
+import dev.ayanfe.taskmanagement.dto.LoginDto;
 import dev.ayanfe.taskmanagement.dto.RegisterDto;
 import dev.ayanfe.taskmanagement.entity.Role;
 import dev.ayanfe.taskmanagement.entity.User;
@@ -8,7 +9,12 @@ import dev.ayanfe.taskmanagement.repository.RoleRepository;
 import dev.ayanfe.taskmanagement.repository.UserRepository;
 import dev.ayanfe.taskmanagement.service.AuthService;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
 
     @Override
     public String register(RegisterDto registerDto) {
@@ -51,5 +58,18 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
 
         return "User Registered Successfully!";
+    }
+
+    @Override
+    public String login(LoginDto loginDto) {
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDto.getUsernameOrEmail(),
+                loginDto.getPassword()
+        ));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return "Login successful!";
     }
 }
