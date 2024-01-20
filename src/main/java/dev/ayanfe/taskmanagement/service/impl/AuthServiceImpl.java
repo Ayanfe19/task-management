@@ -7,6 +7,7 @@ import dev.ayanfe.taskmanagement.entity.User;
 import dev.ayanfe.taskmanagement.exception.TaskAPIException;
 import dev.ayanfe.taskmanagement.repository.RoleRepository;
 import dev.ayanfe.taskmanagement.repository.UserRepository;
+import dev.ayanfe.taskmanagement.security.JwtTokenProvider;
 import dev.ayanfe.taskmanagement.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
@@ -29,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Override
     public String register(RegisterDto registerDto) {
@@ -70,6 +72,8 @@ public class AuthServiceImpl implements AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return "Login successful!";
+        String token = jwtTokenProvider.generateToken(authentication);
+
+        return token;
     }
 }

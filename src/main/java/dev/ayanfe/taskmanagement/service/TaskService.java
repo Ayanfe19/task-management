@@ -13,6 +13,8 @@ public interface TaskService {
 
     TaskDto updateTask(Long taskId, TaskDto updatedTask);
 
+    void deleteTask(Long taskId);
+
     void deleteTask(long taskId);
 
     abstract TaskDto markAsComplete(Long taskId);
